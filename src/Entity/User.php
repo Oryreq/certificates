@@ -13,8 +13,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const ROLES = [
-        'Пользователь' => 'ROLE_USER',
         'Администратор' => 'ROLE_ADMIN',
+        'Пользователь' => 'ROLE_USER',
         'Тренерство' => 'ROLE_SUPER_ADMIN',
     ];
 
