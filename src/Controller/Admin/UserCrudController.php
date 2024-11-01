@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -10,15 +11,40 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 
 class UserCrudController extends AbstractCrudController
 {
+    #[Required]
+    public UserPasswordHasherInterface  $passwordEncoder;
+
+
     public static function getEntityFqcn(): string
     {
         return User::class;
     }
 
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof User && $entityInstance->getPlainPassword()) {
+            $password =$this->passwordEncoder->hashPassword($entityInstance, $entityInstance->getPlainPassword());
+            $entityInstance->setPassword($password);
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof User && $entityInstance->getPlainPassword()) {
+            $password =$this->passwordEncoder->hashPassword($entityInstance, $entityInstance->getPlainPassword());
+            $entityInstance->setPassword($password);
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
+    }
 
     public function configureActions(Actions $actions): Actions
     {
@@ -27,7 +53,6 @@ class UserCrudController extends AbstractCrudController
                          return $action->setLabel('Создать пользователя');
                      });
     }
-
 
     public function configureCrud(Crud $crud): Crud
     {
@@ -46,8 +71,13 @@ class UserCrudController extends AbstractCrudController
         yield TextField::new('username', 'Логин')
                      ->setColumns(4);
 
-        yield TextField::new('password', 'Пароль')
+        yield TextField::new('plainPassword', 'Пароль')
                      ->onlyWhenCreating()
+                     ->setColumns(4);
+
+        yield TextField::new('plainPassword', 'Новый пароль')
+                     ->onlyWhenUpdating()
+                     ->setRequired(true)
                      ->setColumns(4);
 
         yield ChoiceField::new('roles', 'Права')
