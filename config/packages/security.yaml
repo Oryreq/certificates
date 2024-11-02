@@ -16,7 +16,21 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+            json_login:
+                check_path: authentication_token
+                username_path: username
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            jwt: ~
+            entry_point: form_login
+            logout:
+                path: app_logout
+        #enable_authenticator_manager: true
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -26,6 +40,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/$,      roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
+        - { path: ^/admin,  roles: ROLE_USER }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 

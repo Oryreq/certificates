@@ -73,6 +73,7 @@ class UserCrudController extends AbstractCrudController
 
         yield TextField::new('plainPassword', 'Пароль')
                      ->onlyWhenCreating()
+                     ->setRequired(true)
                      ->setColumns(4);
 
         yield TextField::new('plainPassword', 'Новый пароль')
