@@ -59,7 +59,7 @@ class UserCrudController extends AbstractCrudController
         return $crud
                  ->setEntityLabelInPlural('Пользователи')
                  ->setEntityLabelInSingular('Пользователь')
-                 ->setPageTitle('new', 'Добавдение пользователя')
+                 ->setPageTitle('new', 'Добавление пользователя')
                  ->setPageTitle('edit', 'Изменение пользователя');
     }
 
@@ -69,17 +69,20 @@ class UserCrudController extends AbstractCrudController
                      ->onlyOnIndex();
 
         yield TextField::new('username', 'Логин')
-                     ->setColumns(4);
+                     ->setColumns(3);
 
         yield TextField::new('plainPassword', 'Пароль')
                      ->onlyWhenCreating()
                      ->setRequired(true)
-                     ->setColumns(4);
+                     ->setColumns(3);
 
         yield TextField::new('plainPassword', 'Новый пароль')
                      ->onlyWhenUpdating()
                      ->setRequired(true)
-                     ->setColumns(4);
+                     ->setColumns(3);
+
+        yield TextField::new('email', 'Электронная почта')
+                     ->setColumns(3);
 
         yield ChoiceField::new('roles', 'Права')
                      ->setRequired(true)

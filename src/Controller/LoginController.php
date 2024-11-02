@@ -54,14 +54,13 @@ class LoginController extends AbstractController
             // the URL users are redirected to after the login (default: '/admin')
             'target_path' => $this->generateUrl('admin'),
 
-            // the label displayed for the username form field (the |trans filter is applied to it)
             'username_label' => 'Логин',
-
-            // the label displayed for the password form field (the |trans filter is applied to it)
             'password_label' => 'Пароль',
-
-            // the label displayed for the Sign In form button (the |trans filter is applied to it)
             'sign_in_label' => 'Вход',
+
+            'remember_me_enabled' => true,
+            'remember_me_checked' => true,
+            'remember_me_label' => 'Запомнить',
         ]);
     }
 

@@ -2,14 +2,42 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model\Operation;
+use ApiPlatform\OpenApi\Model\RequestBody;
+use App\Controller\Api\ApiRegisterController;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
+#[UniqueEntity('email')]
+#[Post(
+    uriTemplate: '/register',
+    controller: ApiRegisterController::class,
+    openapi: new Operation(
+        requestBody: new RequestBody(
+            content: new \ArrayObject([
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'username' => ['type' => 'string'],
+                            'password' => ['type' => 'string'],
+                            'email'    => ['type' => 'string'],
+                        ]
+                    ]
+                ]
+            ])
+        )
+    ),
+    normalizationContext: ['groups' => 'user:item'],
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const ROLES = [
@@ -18,14 +46,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'Тренерство' => 'ROLE_SUPER_ADMIN',
     ];
 
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(['user:item'])]
     private ?string $username = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['user:item'])]
+    private ?string $email = null;
 
     /**
      * @var list<string> The user roles
@@ -37,6 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups(['user:item'])]
     private ?string $password = null;
 
     private ?string $plainPassword = null;
@@ -55,6 +88,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->username = $username;
 
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): static
+    {
+        $this->email = $email;
         return $this;
     }
 
@@ -112,9 +156,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->plainPassword;
     }
 
-    public function setPlainPassword(?string $plainPassword): void
+    public function setPlainPassword(?string $plainPassword): static
     {
         $this->plainPassword = $plainPassword;
+        return $this;
     }
 
 
