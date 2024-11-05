@@ -2,9 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\RequestBody;
+use App\Controller\Api\ApiChangeEmailController;
+use App\Controller\Api\ApiChangePasswordController;
+use App\Controller\Api\ApiMeController;
 use App\Controller\Api\ApiRegisterController;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,6 +21,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 #[UniqueEntity('email')]
+#[Get(
+    uriTemplate: '/me',
+    controller: ApiMeController::class,
+    #normalizationContext: ['groups' => 'user:item'],
+    #security: "is_granted('ROLE_USER')",
+    #openapi: false
+)]
 #[Post(
     uriTemplate: '/register',
     controller: ApiRegisterController::class,
@@ -38,6 +49,44 @@ use Symfony\Component\Security\Core\User\UserInterface;
     ),
     normalizationContext: ['groups' => 'user:item'],
 )]
+#[Post(
+    uriTemplate: '/users/edit-email',
+    controller: ApiChangeEmailController::class,
+    openapi: new Operation(
+        requestBody: new RequestBody(
+            content: new \ArrayObject([
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'email'             => ['type' => 'string'],
+                            'emailConfirmation' => ['type' => 'string'],
+                        ]
+                    ]
+                ],
+            ])
+        ),
+    ),
+)]
+#[Post(
+    uriTemplate: '/users/edit-password',
+    controller: ApiChangePasswordController::class,
+    openapi: new Operation(
+        requestBody: new RequestBody(
+            content: new \ArrayObject([
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'password'             => ['type' => 'string'],
+                            'passwordConfirmation' => ['type' => 'string'],
+                        ]
+                    ]
+                ],
+            ])
+        ),
+    ),
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const ROLES = [
@@ -49,6 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]

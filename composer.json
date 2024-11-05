@@ -12,7 +12,7 @@
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.3",
-        "easycorp/easyadmin-bundle": "^4.13",а
+        "easycorp/easyadmin-bundle": "^4.13",
         "friendsofsymfony/rest-bundle": "^3.7",
         "jms/serializer-bundle": "^5.5",
         "lcobucci/jwt": "5.4.0",
