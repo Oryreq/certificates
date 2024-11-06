@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Certificate;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -30,6 +31,8 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        yield MenuItem::linkToCrud('Сертификаты', 'fa-solid fa-certificate', Certificate::class);
+        
         yield MenuItem::section('Пользователи');
         yield MenuItem::linkToCrud('Пользователи', 'fa-solid fa-user-gear', User::class);
 
