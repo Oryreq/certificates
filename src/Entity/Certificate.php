@@ -2,18 +2,49 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model\RequestBody;
+use App\Controller\Api\ApiCertificateBuysController;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\UpdatedAtTrait;
 use App\Repository\CertificateRepository;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\OpenApi\Model\Operation;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use DateTime;
 
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: CertificateRepository::class)]
 #[Vich\Uploadable]
+#[Get]
+#[GetCollection(
+    paginationEnabled: false,
+)]
+#[Post(
+    uriTemplate: '/certificate_buys/preview',
+    controller: ApiCertificateBuysController::class,
+    openapi: new Operation(
+        requestBody: new RequestBody(
+            content: new \ArrayObject([
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'id'         => ['type' => 'integer'],
+                            'price'      => ['type' => 'integer'],
+                            'dateTimeAt' => ['type' => 'string'],
+                        ]
+                    ]
+                ]
+            ])
+        )
+    )
+)]
 class Certificate
 {
     use CreatedAtTrait;
@@ -22,21 +53,27 @@ class Certificate
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['certificate:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['certificate:item'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 1024)]
+    #[Groups(['certificate:item'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['certificate:item'])]
     private ?string $shortDescription = null;
 
     #[ORM\Column]
+    #[Groups(['certificate:item'])]
     private ?int $price = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['certificate:item'])]
     private ?string $image = null;
 
     #[Vich\UploadableField(mapping: 'certificates', fileNameProperty: 'image')]
