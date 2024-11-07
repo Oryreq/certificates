@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\RequestBody;
+use App\Controller\Api\ApiApplyCertificatesController;
 use App\Controller\Api\ApiChangeEmailController;
 use App\Controller\Api\ApiChangePasswordController;
 use App\Controller\Api\ApiMeController;
@@ -20,13 +21,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
-#[UniqueEntity('email')]
+#[UniqueEntity(fields: ['email'])]
 #[Get(
     uriTemplate: '/me',
     controller: ApiMeController::class,
-    #normalizationContext: ['groups' => 'user:item'],
-    #security: "is_granted('ROLE_USER')",
-    #openapi: false
+)]
+#[Get(
+    uriTemplate: '/apply-certificates',
+    controller: ApiApplyCertificatesController::class,
 )]
 #[Post(
     uriTemplate: '/register',
@@ -124,6 +126,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
+    #[ORM\Column]
+    private ?int $coins = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -210,6 +215,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->plainPassword = $plainPassword;
         return $this;
+    }
+
+    public function getCoins(): ?int
+    {
+        return $this->coins;
+    }
+
+    public function setCoins(?int $coins): void
+    {
+        $this->coins = $coins;
     }
 
 

@@ -16,6 +16,14 @@ class CertificateRepository extends ServiceEntityRepository
         parent::__construct($registry, Certificate::class);
     }
 
+    public function removeAll(): void
+    {
+        $this->createQueryBuilder('c')
+            ->delete()
+            ->getQuery()
+            ->execute();
+    }
+
     //    /**
     //     * @return Certificate[] Returns an array of Certificate objects
     //     */
