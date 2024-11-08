@@ -35,6 +35,7 @@ class ApiChangePasswordController extends AbstractController
         'details' => 'Password changed successfully.',
     ];
 
+
     public function __invoke(#[MapRequestPayload] ChangePasswordRequest $request): JsonResponse
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');

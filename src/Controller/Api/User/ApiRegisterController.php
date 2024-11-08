@@ -34,6 +34,7 @@ class ApiRegisterController extends AbstractController
         'details' => 'User with this email is already registered',
     ];
 
+
     public function __invoke(#[MapRequestPayload] RegisterRequest $request): JsonResponse
     {
         if ($this->userRepository->existByUsername($request->username)) {
