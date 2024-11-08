@@ -2,40 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Certificate;
+use App\Entity\CertificateBuy;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Certificate>
+ * @extends ServiceEntityRepository<CertificateBuy>
  */
-class CertificateRepository extends ServiceEntityRepository
+class CertificateBuyRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Certificate::class);
-    }
-
-    public function removeAll(): void
-    {
-        $this->createQueryBuilder('c')
-            ->delete()
-            ->getQuery()
-            ->execute();
-    }
-
-    public function existById(string $id): bool
-    {
-        $result = $this->createQueryBuilder('c')
-                       ->andWhere('c.id = :val')
-                       ->setParameter('val', $id)
-                       ->getQuery()
-                       ->getResult();
-        return count($result) !== 0;
+        parent::__construct($registry, CertificateBuy::class);
     }
 
     //    /**
-    //     * @return Certificate[] Returns an array of Certificate objects
+    //     * @return CertificateBuy[] Returns an array of CertificateBuy objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -49,7 +31,7 @@ class CertificateRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Certificate
+    //    public function findOneBySomeField($value): ?CertificateBuy
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')

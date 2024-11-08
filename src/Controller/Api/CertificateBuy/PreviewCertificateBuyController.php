@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Api;
+namespace App\Controller\Api\CertificateBuy;
 
 use App\Repository\CertificateRepository;
 use App\Service\PdfConverter;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Contracts\Service\Attribute\Required;
 
 #[AsController]
-class ApiCertificateBuysController extends AbstractController
+class PreviewCertificateBuyController extends AbstractController
 {
     #[Required]
     public CertificateRepository $certificateRepository;
@@ -25,22 +25,23 @@ class ApiCertificateBuysController extends AbstractController
     private string $CERTIFICATES_PATH = 'images/certificates/';
     private string $CERTIFICATE_NAME = 'mikki_certificate_preview.docx';
 
+    private array $CERTIFICATE_NOT_FOUND_RESPONSE = [
+        'status'  => 'error',
+        'message' => 'certificate with this id not exist',
+    ];
+
 
     /**
      * @throws CopyFileException
      * @throws CreateTemporaryFileException
      */
-    public function __invoke(#[MapRequestPayload] CreateCertificateBuyRequest $request): JsonResponse
+    public function __invoke(#[MapRequestPayload] PreviewCertificateBuyRequest $request): JsonResponse
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $optionalCertificate = $this->certificateRepository->findOneBy(['id' => $request->id]);
         if (!$optionalCertificate) {
-            $response = [
-                'status' => 'error',
-                'message' => 'Certificate with this id not exist',
-            ];
-            return $this->json($response, 404);
+            return $this->json($this->CERTIFICATE_NOT_FOUND_RESPONSE, 400);
         }
 
         $imageName = $optionalCertificate->getImage();
@@ -59,7 +60,7 @@ class ApiCertificateBuysController extends AbstractController
      * @throws CopyFileException
      * @throws CreateTemporaryFileException
      */
-    private function createCertificate(CreateCertificateBuyRequest $request, string $imageName): string
+    private function createCertificate(PreviewCertificateBuyRequest $request, string $imageName): string
     {
         $templateProcessor = new TemplateProcessor( $this->CERTIFICATES_PATH . $this->CERTIFICATE_NAME);
 

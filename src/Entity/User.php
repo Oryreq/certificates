@@ -6,11 +6,10 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\RequestBody;
-use App\Controller\Api\ApiApplyCertificatesController;
-use App\Controller\Api\ApiChangeEmailController;
-use App\Controller\Api\ApiChangePasswordController;
-use App\Controller\Api\ApiMeController;
-use App\Controller\Api\ApiRegisterController;
+use App\Controller\Api\User\ApiChangeEmailController;
+use App\Controller\Api\User\ApiChangePasswordController;
+use App\Controller\Api\User\ApiMeController;
+use App\Controller\Api\User\ApiRegisterController;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
@@ -25,10 +24,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[Get(
     uriTemplate: '/me',
     controller: ApiMeController::class,
-)]
-#[Get(
-    uriTemplate: '/apply-certificates',
-    controller: ApiApplyCertificatesController::class,
 )]
 #[Post(
     uriTemplate: '/register',

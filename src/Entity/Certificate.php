@@ -4,9 +4,6 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\OpenApi\Model\RequestBody;
-use App\Controller\Api\ApiCertificateBuysController;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\UpdatedAtTrait;
 use App\Repository\CertificateRepository;
@@ -14,7 +11,6 @@ use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\OpenApi\Model\Operation;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use DateTime;
 
@@ -24,26 +20,6 @@ use DateTime;
 #[Get]
 #[GetCollection(
     paginationEnabled: false,
-)]
-#[Post(
-    uriTemplate: '/certificate_buys/preview',
-    controller: ApiCertificateBuysController::class,
-    openapi: new Operation(
-        requestBody: new RequestBody(
-            content: new \ArrayObject([
-                'application/json' => [
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'id'         => ['type' => 'integer'],
-                            'price'      => ['type' => 'integer'],
-                            'dateTimeAt' => ['type' => 'string'],
-                        ]
-                    ]
-                ]
-            ])
-        )
-    )
 )]
 class Certificate
 {

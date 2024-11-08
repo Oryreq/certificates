@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller\Api;
+namespace App\Controller\Api\CertificateBuy;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateCertificateBuyRequest
+class PreviewCertificateBuyRequest
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Значение не должно быть пустым')]
