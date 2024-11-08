@@ -20,6 +20,17 @@ class ApiChangeEmailController extends AbstractController
     #[Required]
     public EntityManagerInterface $entityManager;
 
+    private array $EMAILS_NOT_MATCH_RESPONSE = [
+        'status' => 'error',
+        'details' => 'Email addresses does not match.',
+    ];
+
+    private array $EMAIL_CHANGING_SUCCESS_RESPONSE = [
+        'status' => 'success',
+        'details' => 'Email address changed successfully.',
+    ];
+
+
     public function __invoke(#[MapRequestPayload] ChangeEmailRequest $request): JsonResponse
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -27,19 +38,11 @@ class ApiChangeEmailController extends AbstractController
         $user = $this->getUser();
 
         if ($request->email != $request->emailConfirmation) {
-            $response = [
-                'status' => 'error',
-                'details' => 'Email addresses does not match.',
-            ];
-            return $this->json($response);
+            return $this->json($this->EMAILS_NOT_MATCH_RESPONSE);
         }
 
         $this->changeEmail($user->getEmail(), $request->email);
-        $response = [
-            'status' => 'success',
-            'details' => 'Email address changed successfully.',
-        ];
-        return $this->json($response);
+        return $this->json($this->EMAIL_CHANGING_SUCCESS_RESPONSE);
     }
 
     private function changeEmail(string $oldEmail, string $newEmail): void

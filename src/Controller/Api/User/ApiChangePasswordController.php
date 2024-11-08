@@ -25,6 +25,15 @@ class ApiChangePasswordController extends AbstractController
     #[Required]
     public UserPasswordHasherInterface $passwordHasher;
 
+    private array $PASSWORDS_NOT_MATCH_RESPONSE = [
+        'status' => 'error',
+        'details' => 'Passwords does not match.',
+    ];
+
+    private array $PASSWORD_CHANGING_SUCCESS = [
+        'status' => 'success',
+        'details' => 'Password changed successfully.',
+    ];
 
     public function __invoke(#[MapRequestPayload] ChangePasswordRequest $request): JsonResponse
     {
@@ -33,19 +42,11 @@ class ApiChangePasswordController extends AbstractController
         $user = $this->getUser();
 
         if ($request->password != $request->passwordConfirmation) {
-            $response = [
-                'status' => 'error',
-                'details' => 'Passwords does not match.',
-            ];
-            return $this->json($response);
+            return $this->json($this->PASSWORDS_NOT_MATCH_RESPONSE);
         }
 
         $this->changePassword($user->getEmail(), $request->password);
-        $response = [
-            'status' => 'success',
-            'details' => 'Password changed successfully.',
-        ];
-        return $this->json($response);
+        return $this->json($this->PASSWORD_CHANGING_SUCCESS);
     }
 
     private function changePassword(string $email, string $password): void

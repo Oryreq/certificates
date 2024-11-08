@@ -24,23 +24,24 @@ class ApiRegisterController extends AbstractController
     #[Required]
     public UserPasswordHasherInterface $passwordHasher;
 
+    private array $USERNAME_ALREADY_EXIST_RESPONSE = [
+        'status' => 'error',
+        'details' => 'User with this username is already registered',
+    ];
+
+    private array $EMAIL_ALREADY_EXIST_RESPONSE = [
+        'status' => 'error',
+        'details' => 'User with this email is already registered',
+    ];
 
     public function __invoke(#[MapRequestPayload] RegisterRequest $request): JsonResponse
     {
         if ($this->userRepository->existByUsername($request->username)) {
-            $response = [
-                'status' => 'error',
-                'details' => 'User with this username is already registered',
-            ];
-            return $this->json($response);
+            return $this->json($this->USERNAME_ALREADY_EXIST_RESPONSE);
         }
 
         if ($this->userRepository->existByEmail($request->email)) {
-            $response = [
-                'status' => 'error',
-                'details' => 'User with this email is already registered',
-            ];
-            return $this->json($response);
+            return $this->json($this->EMAIL_ALREADY_EXIST_RESPONSE);
         }
 
         $id = $this->saveUser($request);
